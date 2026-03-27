@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Report — {{ tenant.brand_name }}</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <style>:root { --primary: {{ tenant.primary_color }}; }</style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="/dashboard" class="sidebar-brand">
+        {% if tenant.logo_url %}
+        <img src="{{ tenant.logo_url }}" alt="{{ tenant.brand_name }}">
+        {% endif %}
+        <span class="sidebar-brand-name">{{ tenant.brand_name }}</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Home
+      </a>
+      <a href="/report" class="nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Reports
+      </a>
+      <a href="/search" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </a>
+      <a href="/dashboard" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Members
+      </a>
+      <a href="/dashboard" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      {% set display_name = user.name if user.name else user.email.split('@')[0] %}
+      <div class="user-card">
+        <div class="user-info-row">
+          <div class="user-avatar" style="background:{{ avatar_color(user.email) }}">{{ display_name[0].upper() }}</div>
+          <div>
+            <div class="user-role">Host Member</div>
+            <div class="user-name">{{ display_name }}</div>
+          </div>
+        </div>
+        <a href="/logout" style="font-size:12px;color:#64748b;text-decoration:none;margin-top:4px;display:block;">Sign out</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Submit a Guest Report</h1>
+        <p class="page-subtitle">Help protect the community by reporting problematic guests.</p>
+      </div>
+    </div>
+
+    <form method="post" action="/report" enctype="multipart/form-data">
+
+      <div class="report-wrapper">
+
+        {% if error %}
+        <div class="banner banner-error" style="margin-bottom:16px;">{{ error }}</div>
+        {% endif %}
+
+        <!-- Section 1: Guest Name & Profile -->
+        <div class="report-section">
+          <div class="section-label">Guest Name &amp; Profile</div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label>First Name <span class="required-star">*</span></label>
+              <input type="text" name="first_name" placeholder="First Name" required>
+            </div>
+            <div class="form-field">
+              <label>Last Name</label>
+              <input type="text" name="last_name" placeholder="Last Name (if known)">
+            </div>
+          </div>
+          <div class="form-field form-full">
+            <label>Airbnb / Vrbo Profile URL</label>
+            <input type="url" name="airbnb_vrbo_profile" placeholder="https://www.airbnb.com/users/...">
+          </div>
+        </div>
+
+        <!-- Section 2: Contact Information -->
+        <div class="report-section">
+          <div class="section-label">Contact Information</div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label>Phone Number</label>
+              <input type="tel" name="phone" placeholder="Phone (if known)">
+            </div>
+            <div class="form-field">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="Email (if known)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Guest Location -->
+        <div class="report-section">
+          <div class="section-label">Guest Location</div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label>City</label>
+              <input type="text" name="city" placeholder="City">
+            </div>
+            <div class="form-field">
+              <label>State</label>
+              <select name="state">
+                <option value="">Select State</option>
+                {% for s in ["AK","AL","AR","AZ","CA","CO","CT","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"] %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Stay Details -->
+        <div class="report-section">
+          <div class="section-label">Stay Details</div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label>Group Size</label>
+              <input type="number" name="prev_group_size" placeholder="Number of guests" min="1">
+            </div>
+            <div class="form-field">
+              <label>Stay Length (nights)</label>
+              <input type="number" name="prev_stay_length" placeholder="Number of nights" min="1">
+            </div>
+          </div>
+          <div class="form-field form-full">
+            <label>Date Guest Stayed</label>
+            <input type="date" name="stay_date">
+          </div>
+        </div>
+
+        <!-- Section 5: What Happened -->
+        <div class="report-section">
+          <div class="section-label">What Happened? (Select all that apply)</div>
+          <div class="checkbox-grid">
+            {% set flag_options = [
+              "Had a Party / Extra Guests",
+              "Damaged Items (Walls, Etc)",
+              "Over Stayed / Late Check Out",
+              "Left Bad Review / Dishonest Fake",
+              "Noise Disturbances / Loud Music",
+              "Pets without Permission",
+              "Requested Discount",
+              "Inaccurate / Misleading Report Airbnb/VRBO"
+            ] %}
+            {% for option in flag_options %}
+            <label class="checkbox-item">
+              <input type="checkbox" name="incident_flags" value="{{ option }}">
+              {{ option }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Section 6: Rating & Details -->
+        <div class="report-section">
+          <div class="section-label">Rating &amp; Details</div>
+          <div style="margin-bottom:8px;">
+            <label style="display:block;font-size:12px;color:#888;margin-bottom:8px;">Guest Rating</label>
+            <div class="star-rating">
+              <input type="hidden" name="guest_rating" id="guest-rating-val" value="">
+              <span class="star" data-val="1">&#9733;</span>
+              <span class="star" data-val="2">&#9733;</span>
+              <span class="star" data-val="3">&#9733;</span>
+              <span class="star" data-val="4">&#9733;</span>
+              <span class="star" data-val="5">&#9733;</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Details of Incident <span class="required-star">*</span></label>
+            <textarea name="details_of_incident" placeholder="Describe the incident in detail..." required></textarea>
+          </div>
+        </div>
+
+        <!-- Section 7: Evidence Photos -->
+        <div class="report-section">
+          <div class="section-label">Evidence Photos (Optional — JPG, PNG, GIF, WEBP)</div>
+          <div class="upload-grid">
+            <div class="upload-box" id="upload-box-1">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <input type="file" name="photo1" accept="image/*" id="photo1-input" style="display:none;">
+              <span class="upload-box-label">Upload Photo 1</span>
+              <span class="upload-box-sub">Click to browse</span>
+            </div>
+            <div class="upload-box" id="upload-box-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <input type="file" name="photo2" accept="image/*" id="photo2-input" style="display:none;">
+              <span class="upload-box-label">Upload Photo 2</span>
+              <span class="upload-box-sub">Click to browse</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 8: Privacy & Submit -->
+        <div class="report-section">
+          <div class="section-label">Privacy &amp; Submit</div>
+          <div class="privacy-row">
+            <input type="checkbox" name="privacy_agreed" value="1" required>
+            <label>I agree to the Privacy Policy and confirm the information provided is accurate.</label>
+          </div>
+          <button type="submit" class="btn-submit">SUBMIT REPORT</button>
+        </div>
+
+      </div>
+    </form>
+
+  </main>
+</div>
+
+<script src="/static/js/dashboard.js"></script>
+<script>
+// Upload box click handlers
+document.getElementById('upload-box-1').addEventListener('click', function() {
+  document.getElementById('photo1-input').click();
+});
+document.getElementById('upload-box-2').addEventListener('click', function() {
+  document.getElementById('photo2-input').click();
+});
+document.getElementById('photo1-input').addEventListener('change', function() {
+  if (this.files[0]) {
+    var lbl = document.querySelector('#upload-box-1 .upload-box-label');
+    lbl.textContent = this.files[0].name;
+    document.getElementById('upload-box-1').style.borderColor = '#22c55e';
+  }
+});
+document.getElementById('photo2-input').addEventListener('change', function() {
+  if (this.files[0]) {
+    var lbl = document.querySelector('#upload-box-2 .upload-box-label');
+    lbl.textContent = this.files[0].name;
+    document.getElementById('upload-box-2').style.borderColor = '#22c55e';
+  }
+});
+</script>
+</body>
+</html>

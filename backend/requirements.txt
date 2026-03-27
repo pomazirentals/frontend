@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart
+aiofiles
+python-jose[cryptography]
+bcrypt
+passlib[bcrypt]
+authlib
+httpx
+stripe
+fastapi-mail
+python-dotenv
+anthropic
+rapidfuzz
+twilio

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — {{ tenant.brand_name }}</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <style>:root { --primary: {{ tenant.primary_color }}; }</style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="/dashboard" class="sidebar-brand">
+        {% if tenant.logo_url %}
+        <img src="{{ tenant.logo_url }}" alt="{{ tenant.brand_name }}">
+        {% endif %}
+        <span class="sidebar-brand-name">{{ tenant.brand_name }}</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Home
+      </a>
+      <a href="/report" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+        Reports
+      </a>
+      <a href="/search" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </a>
+      <a href="/dashboard" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Members
+      </a>
+      <a href="/dashboard" class="nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      {% set display_name = user.name if user.name else user.email.split('@')[0] %}
+      {% set initial = display_name[0].upper() %}
+      <div class="user-card">
+        <div class="user-info-row">
+          <div class="user-avatar" style="background: {{ avatar_color(user.email) }}">{{ initial }}</div>
+          <div>
+            <div class="user-role">Host Member</div>
+            <div class="user-name">{{ display_name }}</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:6px;">
+          Membership:
+          {% if subscription.is_paid %}
+          <span class="badge-paid">PAID</span>
+          {% else %}
+          <span class="badge-trial">TRIAL</span>
+          {% endif %}
+        </div>
+        <div class="status-row">
+          Status: <span class="status-dot"></span> Active
+        </div>
+        <a href="/logout" style="font-size:12px;color:#64748b;text-decoration:none;margin-top:4px;display:block;">Sign out</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    {% if reported %}
+    <div class="banner banner-success">Report submitted successfully. It will be reviewed by our team.</div>
+    {% endif %}
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Guest Surveillance Dashboard</h1>
+        <p class="page-subtitle">Monitor guest history and maintain property safety.</p>
+      </div>
+      <div class="header-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search Guest Name or ID...">
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#eff6ff;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="stat-label">Total Searches</div>
+        <div class="stat-number">{{ stats.total_searches }}</div>
+        <div class="stat-sub" style="color:#22c55e;">+12% from yesterday</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fff7ed;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="stat-label">Flagged Guests</div>
+        <div class="stat-number">{{ stats.flagged_guests }}</div>
+        <div class="stat-sub" style="color:#ef4444;">+3 new reports this week</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#f0fdf4;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stat-label">Active Reports</div>
+        <div class="stat-number">{{ stats.active_reports }}</div>
+        <div class="stat-sub" style="color:#94a3b8;">Global historical database</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#eff6ff;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <div class="stat-label">File Report</div>
+        <a href="/report" class="btn-create-report" style="display:block;height:40px;line-height:40px;background:var(--primary);color:#fff;font-weight:700;border-radius:8px;text-align:center;text-decoration:none;font-size:13px;margin-top:16px;">CREATE NEW REPORT</a>
+        <div class="stat-sub" style="color:#94a3b8;margin-top:8px;">Submit a new guest incident</div>
+      </div>
+
+    </div>
+
+    <!-- Recent Reports Table -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <span class="table-card-title">Recent Reports Matches</span>
+        <a href="/search" class="table-view-all" style="color:var(--primary);">View All</a>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Guest Name</th>
+            <th>Issue Type</th>
+            <th>Date Reported</th>
+            <th>Severity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if recent_reports %}
+            {% for report in recent_reports %}
+            <tr>
+              <td>
+                <div class="guest-cell">
+                  <div class="guest-avatar" style="background:{{ avatar_color(report.first_name) }}">
+                    {{ report.first_name[0].upper() if report.first_name else '?' }}
+                  </div>
+                  <div>
+                    <div class="guest-name">{{ report.first_name }} {{ report.last_name }}</div>
+                    <div class="guest-id">ID: {{ report.id | string | upper }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if report.incident_flags %}
+                  {{ report.incident_flags[0] }}
+                {% else %}
+                  Unspecified
+                {% endif %}
+              </td>
+              <td>
+                {% if report.created_at %}
+                  {{ report.created_at[:10] }}
+                {% endif %}
+              </td>
+              <td>
+                {% set rating = report.guest_rating %}
+                {% if rating and rating <= 2 %}
+                  <span class="severity-badge severity-critical">Critical</span>
+                {% elif rating == 3 %}
+                  <span class="severity-badge severity-high">High</span>
+                {% elif rating == 4 %}
+                  <span class="severity-badge severity-medium">Medium</span>
+                {% elif rating == 5 %}
+                  <span class="severity-badge severity-low">Low</span>
+                {% else %}
+                  <span class="severity-badge severity-unknown">Unknown</span>
+                {% endif %}
+              </td>
+              <td>
+                <button class="action-btn" title="View">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5" style="text-align:center;color:#aaa;font-style:italic;padding:40px;">No reports yet.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+
+      <div class="table-footer">
+        <span class="table-footer-text">Showing {{ recent_reports|length }} of {{ stats.active_reports }} entries</span>
+        <div class="table-pagination">
+          <button class="page-btn" disabled>Previous</button>
+          <button class="page-btn" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

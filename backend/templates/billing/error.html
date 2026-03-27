@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Unavailable — {{ tenant.brand_name }}</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <style>:root { --primary: {{ tenant.primary_color }}; }</style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="/dashboard" class="sidebar-brand">
+        {% if tenant.logo_url %}
+        <img src="{{ tenant.logo_url }}" alt="{{ tenant.brand_name }}">
+        {% endif %}
+        <span class="sidebar-brand-name">{{ tenant.brand_name }}</span>
+      </a>
+    </div>
+  </aside>
+  <main class="main-content">
+    <div class="billing-card" style="max-width:480px;margin:80px auto;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.5" style="margin:0 auto;display:block;">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <h1 style="font-size:22px;font-weight:700;color:#111;margin-top:20px;">Service Unavailable</h1>
+      <p style="font-size:15px;color:#888;margin:12px 0 28px;">{{ message }}</p>
+      <a href="/dashboard" class="btn-outline">← Back to Dashboard</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

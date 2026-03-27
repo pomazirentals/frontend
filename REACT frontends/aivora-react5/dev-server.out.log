@@ -1,0 +1,19 @@
+
+> Aivora@0.1.0 start
+> node scripts/start.js
+
+Starting the development server...
+
+Local: http://localhost:3000
+Network: http://192.168.1.142:3000
+Compiled successfully!
+
+You can now view Aivora in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://192.168.1.142:3000
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+webpack compiled [1m[32msuccessfully[39m[22m

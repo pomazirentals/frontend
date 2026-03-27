@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Guest Report — {{ tenant.brand_name }}</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f6fa;
+            min-height: 100vh;
+            padding: 2.5rem 1rem 5rem;
+            color: #1a1a2e;
+        }
+
+        .page-wrapper { max-width: 680px; margin: 0 auto; }
+
+        /* ── Header ──────────────────────────────────────── */
+        .form-header { text-align: center; margin-bottom: 2rem; }
+        .form-header img { max-height: 48px; margin-bottom: 1rem; }
+        .form-header h1 {
+            font-size: 1.75rem; font-weight: 800;
+            color: #111827; margin-bottom: 0.4rem;
+        }
+        .form-header p {
+            font-size: 0.95rem; color: #6b7280; line-height: 1.5;
+        }
+
+        /* ── Alerts ──────────────────────────────────────── */
+        .alert {
+            padding: 1rem 1.25rem; border-radius: 10px;
+            margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;
+        }
+        .alert-success {
+            background: #ecfdf5; color: #065f46;
+            border: 1px solid #a7f3d0; border-left: 4px solid #10b981;
+        }
+        .alert-error {
+            background: #fef2f2; color: #991b1b;
+            border: 1px solid #fecaca; border-left: 4px solid #ef4444;
+        }
+        .alert-title { font-weight: 700; margin-bottom: 0.2rem; }
+
+        /* ── Card ────────────────────────────────────────── */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.05);
+            padding: 1.75rem 1.75rem 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .section-label {
+            font-size: 0.68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.09em;
+            color: #9ca3af; margin-bottom: 1.1rem;
+            padding-bottom: 0.55rem; border-bottom: 1px solid #f3f4f6;
+        }
+
+        /* ── Grid ────────────────────────────────────────── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; }
+        .full   { grid-column: 1 / -1; }
+
+        /* ── Fields ──────────────────────────────────────── */
+        .field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+        label {
+            font-size: 0.78rem; font-weight: 600; color: #374151;
+        }
+        label .hint { font-weight: 400; color: #9ca3af; margin-left: 0.3rem; }
+        label .req  { color: #ef4444; margin-left: 2px; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%; height: 44px;
+            padding: 0 0.875rem;
+            border: 1.5px solid #e5e7eb; border-radius: 8px;
+            font-size: 0.9rem; color: #111827; background: #fff;
+            outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+            appearance: none; -webkit-appearance: none;
+        }
+        input::placeholder, textarea::placeholder { color: #b0b7c3; }
+        input:focus, select:focus, textarea:focus {
+            border-color: {{ tenant.primary_color }};
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239ca3af' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.875rem center;
+            padding-right: 2.25rem; cursor: pointer;
+        }
+        textarea {
+            height: auto; min-height: 120px;
+            padding: 0.75rem 0.875rem;
+            resize: vertical; line-height: 1.55;
+        }
+        input[type="date"] { cursor: pointer; }
+
+        /* ── Checkboxes ──────────────────────────────────── */
+        .checkbox-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.6rem 1rem; margin-top: 0.25rem;
+        }
+        .checkbox-item { display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; }
+        .checkbox-item input[type="checkbox"] {
+            width: 16px; height: 16px; margin-top: 1px;
+            accent-color: {{ tenant.primary_color }}; cursor: pointer; flex-shrink: 0;
+            appearance: auto; -webkit-appearance: auto;
+        }
+        .checkbox-item span { font-size: 0.83rem; color: #374151; line-height: 1.35; }
+
+        /* ── Star Rating ─────────────────────────────────── */
+        .stars {
+            display: inline-flex; flex-direction: row-reverse; gap: 2px;
+        }
+        .stars input[type="radio"] { display: none; }
+        .stars label {
+            font-size: 2rem; color: #d1d5db;
+            cursor: pointer; transition: color 0.1s; line-height: 1;
+        }
+        .stars input:checked ~ label,
+        .stars input:checked + label { color: #f59e0b; }
+        .stars label:hover,
+        .stars label:hover ~ label   { color: #fbbf24; }
+
+        /* ── Upload Boxes ────────────────────────────────── */
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .upload-box {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            border: 2px dashed #d1d5db; border-radius: 10px;
+            padding: 1.75rem 1rem; cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            background: #fafafa; text-align: center;
+        }
+        .upload-box:hover { border-color: {{ tenant.primary_color }}; background: #f5f3ff; }
+        .upload-box input[type="file"] { display: none; }
+        .upload-icon  { font-size: 1.75rem; color: #9ca3af; line-height: 1; }
+        .upload-title { font-size: 0.83rem; font-weight: 600; color: #374151; }
+        .upload-hint  { font-size: 0.74rem; color: #9ca3af; }
+        .upload-filename {
+            font-size: 0.76rem; color: {{ tenant.primary_color }};
+            font-weight: 500; word-break: break-all; display: none;
+        }
+
+        /* ── Privacy & Submit ────────────────────────────── */
+        .privacy-row {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            padding: 1rem 0 0.25rem;
+        }
+        .privacy-row input[type="checkbox"] {
+            width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0;
+            accent-color: {{ tenant.primary_color }};
+            appearance: auto; -webkit-appearance: auto;
+        }
+        .privacy-row span { font-size: 0.83rem; color: #6b7280; line-height: 1.45; }
+        .privacy-row a { color: {{ tenant.primary_color }}; text-decoration: none; }
+        .privacy-row a:hover { text-decoration: underline; }
+
+        .submit-btn {
+            width: 100%; height: 50px;
+            background: {{ tenant.primary_color }}; color: #fff;
+            border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: 700;
+            cursor: pointer; letter-spacing: 0.01em;
+            transition: opacity 0.15s, transform 0.1s;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover  { opacity: 0.9; }
+        .submit-btn:active { transform: translateY(1px); }
+
+        .form-footer {
+            text-align: center; margin-top: 1.5rem;
+            font-size: 0.8rem; color: #9ca3af;
+        }
+
+        @media (max-width: 560px) {
+            .grid-2, .checkbox-grid, .upload-grid { grid-template-columns: 1fr; }
+            .full { grid-column: auto; }
+            .card { padding: 1.25rem; }
+            .form-header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+    <div class="form-header">
+        {% if tenant.logo_url %}
+        <img src="{{ tenant.logo_url }}" alt="{{ tenant.brand_name }}">
+        {% endif %}
+        <h1>Submit a Guest Report</h1>
+        <p>Help protect the hosting community by reporting a problematic guest.<br>All submissions are reviewed privately.</p>
+    </div>
+
+    {% if error_msg %}
+    <div class="alert alert-error">
+        <div class="alert-title">&#9888; Submission Failed</div>
+        {{ error_msg }}
+    </div>
+    {% endif %}
+
+    <form action="/submit-report" method="post" enctype="multipart/form-data">
+
+        <!-- Guest Identity -->
+        <div class="card">
+            <div class="section-label">Guest Name &amp; Profile</div>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="first_name">First Name <span class="req">*</span></label>
+                    <input type="text" id="first_name" name="first_name" placeholder="First Name" required>
+                </div>
+                <div class="field">
+                    <label for="last_name">Last Name <span class="hint">(Leave blank if unknown)</span></label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Last Name">
+                </div>
+                <div class="field full">
+                    <label for="airbnb_vrbo_profile">Airbnb / Vrbo Profile <span class="hint">(URL or username)</span></label>
+                    <input type="text" id="airbnb_vrbo_profile" name="airbnb_vrbo_profile" placeholder="e.g. airbnb.com/users/12345">
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="card">
+            <div class="section-label">Contact Information</div>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" placeholder="(000) 000-0000">
+                </div>
+                <div class="field">
+                    <label for="email">Email Address <span class="hint">(Leave blank if unknown)</span></label>
+                    <input type="email" id="email" name="email" placeholder="guest@email.com">
+                </div>
+            </div>
+        </div>
+
+        <!-- Location -->
+        <div class="card">
+            <div class="section-label">Guest Location</div>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="City">
+                </div>
+                <div class="field">
+                    <label for="state">State</label>
+                    <select id="state" name="state">
+                        <option value="">Select State</option>
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stay Details -->
+        <div class="card">
+            <div class="section-label">Stay Details</div>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="prev_group_size">Group Size</label>
+                    <input type="number" id="prev_group_size" name="prev_group_size" min="1" value="1">
+                </div>
+                <div class="field">
+                    <label for="prev_stay_length">Length of Stay <span class="hint">(nights)</span></label>
+                    <input type="number" id="prev_stay_length" name="prev_stay_length" min="1" value="1">
+                </div>
+                <div class="field">
+                    <label for="stay_date">Date Guest Stayed</label>
+                    <input type="date" id="stay_date" name="stay_date">
+                </div>
+            </div>
+        </div>
+
+        <!-- Incident Flags -->
+        <div class="card">
+            <div class="section-label">What Happened? <span style="font-weight:400;text-transform:none;letter-spacing:0;">(select all that apply)</span></div>
+            <div class="checkbox-grid">
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Had a Party / Extra Guest">
+                    <span>Had a Party / Extra Guest</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Damaged Items (Walls, Etc)">
+                    <span>Damaged Items (Walls, Etc)</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Over Stayed / Late Check out">
+                    <span>Over Stayed / Late Check out</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Left Bad Review / Dishonest Fake">
+                    <span>Left Bad Review / Dishonest Fake</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Noise Disturbances / Loud Music">
+                    <span>Noise Disturbances / Loud Music</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Pets without Permission">
+                    <span>Pets without Permission</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Requested Discount">
+                    <span>Requested Discount</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="incident_flags" value="Inaccurate / Misleading Report Airbnb/VRBO">
+                    <span>Inaccurate / Misleading Report Airbnb/VRBO</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Rating & Details -->
+        <div class="card">
+            <div class="section-label">Rating &amp; Details</div>
+            <div class="grid-2">
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Guest Rating</label>
+                    <div class="stars">
+                        <input type="radio" name="guest_rating" id="s5" value="5"><label for="s5" title="5 stars">&#9733;</label>
+                        <input type="radio" name="guest_rating" id="s4" value="4"><label for="s4" title="4 stars">&#9733;</label>
+                        <input type="radio" name="guest_rating" id="s3" value="3"><label for="s3" title="3 stars">&#9733;</label>
+                        <input type="radio" name="guest_rating" id="s2" value="2"><label for="s2" title="2 stars">&#9733;</label>
+                        <input type="radio" name="guest_rating" id="s1" value="1"><label for="s1" title="1 star">&#9733;</label>
+                    </div>
+                </div>
+                <div class="field full" style="margin-top: 0.75rem;">
+                    <label for="details_of_incident">Details of Incident <span class="req">*</span></label>
+                    <textarea id="details_of_incident" name="details_of_incident"
+                              placeholder="Describe what happened in detail..." required></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Photos -->
+        <div class="card">
+            <div class="section-label">Evidence Photos <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#b0b7c3;">(optional — JPG, PNG, GIF, WEBP)</span></div>
+            <div class="upload-grid">
+                <label class="upload-box" for="image_1" id="label_image_1">
+                    <input type="file" id="image_1" name="image_1" accept="image/*"
+                           onchange="showFilename(this, 'label_image_1')">
+                    <div class="upload-icon">&#9729;</div>
+                    <div class="upload-title">Upload Photo 1</div>
+                    <div class="upload-hint">Click to browse</div>
+                    <span class="upload-filename"></span>
+                </label>
+                <label class="upload-box" for="image_2" id="label_image_2">
+                    <input type="file" id="image_2" name="image_2" accept="image/*"
+                           onchange="showFilename(this, 'label_image_2')">
+                    <div class="upload-icon">&#9729;</div>
+                    <div class="upload-title">Upload Photo 2</div>
+                    <div class="upload-hint">Click to browse</div>
+                    <span class="upload-filename"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Privacy & Submit -->
+        <div class="card">
+            <label class="privacy-row">
+                <input type="checkbox" required>
+                <span>I agree to the <a href="#">Privacy Policy</a> and confirm that the information I am submitting is accurate to the best of my knowledge.</span>
+            </label>
+            <button type="submit" class="submit-btn">Submit Report</button>
+        </div>
+
+    </form>
+
+    <p class="form-footer">Your report is stored securely and reviewed by our team.</p>
+
+</div>
+
+<script>
+    function showFilename(input, labelId) {
+        var label = document.getElementById(labelId);
+        var fnSpan = label.querySelector('.upload-filename');
+        var hint   = label.querySelector('.upload-hint');
+        if (input.files && input.files[0]) {
+            fnSpan.textContent = input.files[0].name;
+            fnSpan.style.display = 'block';
+            hint.style.display   = 'none';
+            label.style.borderColor = '{{ tenant.primary_color }}';
+            label.style.background  = '#f5f3ff';
+        }
+    }
+</script>
+</body>
+</html>

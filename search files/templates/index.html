@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Search - WordPress Style</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f1f1f1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
+        .search-container { max-width: 800px; margin: 50px auto; background: #fff; padding: 30px; border: 1px solid #ccd0d4; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+        .wp-header { border-bottom: 1px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+        .wp-header h2 { color: #23282d; font-size: 23px; font-weight: 400; }
+        .form-label { font-weight: 600; color: #50575e; }
+        .btn-wp { background-color: #2271b1; border-color: #2271b1; color: #fff; }
+        .btn-wp:hover { background-color: #135e96; border-color: #135e96; color: #fff; }
+        .result-card { border-left: 4px solid #2271b1; margin-bottom: 15px; transition: transform 0.2s; }
+        .result-card:hover { transform: translateX(5px); }
+        .temp-hot { color: #d63638; font-weight: bold; }
+        .temp-warm { color: #f0b849; font-weight: bold; }
+        .temp-cold { color: #72aee6; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="search-container">
+        <div class="wp-header">
+            <h2>Reported Guest Search</h2>
+        </div>
+        
+        <form id="searchForm" class="row g-3">
+            <div class="col-md-6">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" placeholder="e.g. Michael">
+            </div>
+            <div class="col-md-6">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="last_name" placeholder="e.g. Scott">
+            </div>
+            <div class="col-md-6">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phone" placeholder="e.g. 570-555-1234">
+            </div>
+            <div class="col-md-4">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" placeholder="e.g. Scranton">
+            </div>
+            <div class="col-md-2">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" placeholder="PA">
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-wp px-4">Search Database</button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <div id="resultsSection" style="display: none;">
+            <h4 class="mb-3">Search Results (<span id="matchCount">0</span>)</h4>
+            <div id="resultsList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const query = {
+            first_name: document.getElementById('first_name').value,
+            last_name: document.getElementById('last_name').value,
+            phone: document.getElementById('phone').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value
+        };
+
+        const response = await fetch('/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(query)
+        });
+
+        const results = await response.json();
+        displayResults(results);
+    });
+
+    function displayResults(results) {
+        const section = document.getElementById('resultsSection');
+        const list = document.getElementById('resultsList');
+        const count = document.getElementById('matchCount');
+        
+        section.style.display = 'block';
+        list.innerHTML = '';
+        count.innerText = results.count;
+
+        if (results.matches.length === 0) {
+            list.innerHTML = '<div class="alert alert-info">No matches found.</div>';
+            return;
+        }
+
+        results.matches.forEach(match => {
+            const tempClass = `temp-${match.temperature.toLowerCase()}`;
+            const card = document.createElement('div');
+            card.className = 'card result-card shadow-sm';
+            card.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">${match.data.first_name} ${match.data.last_name}</h5>
+                        <span class="${tempClass}">${match.match_score}% Match (${match.temperature})</span>
+                    </div>
+                    <p class="card-text mb-1"><strong>Phone:</strong> ${match.data.phone || 'N/A'}</p>
+                    <p class="card-text mb-1"><strong>Location:</strong> ${match.data.location}</p>
+                    <p class="card-text mb-0 text-muted"><strong>Reason:</strong> ${match.data.reason}</p>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+</script>
+
+</body>
+</html>

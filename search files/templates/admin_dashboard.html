@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .card { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .status-ok { color: green; font-weight: bold; }
+        nav a { margin-right: 1rem; text-decoration: none; color: #007bff; }
+        nav a:hover { text-decoration: underline; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+        ul.logs { background: #f9f9f9; padding: 1rem; border: 1px solid #eee; list-style: none; max-height: 200px; overflow-y: auto; }
+        ul.logs li { border-bottom: 1px solid #eee; padding: 0.25rem 0; font-family: monospace; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    
+    <nav>
+        <a href="/admin/form">Submit Report</a>
+        <a href="/admin/search">Search Guests</a>
+        <a href="/admin/results">View All Reports</a>
+        <a href="http://localhost/wp-admin">WordPress Admin</a>
+        <a href="/docs">FastAPI Docs</a>
+    </nav>
+
+    <div class="card">
+        <h2>System Status</h2>
+        <p><strong>Total Reports:</strong> {{ report_count }}</p>
+        <p><strong>API Status:</strong> <span class="status-ok">OK</span></p>
+        <p><strong>Server Status:</strong> <span class="status-ok">Running</span></p>
+    </div>
+
+    <div class="card">
+        <h2>Recent Logs</h2>
+        <ul class="logs">
+            {% for log in logs %}
+            <li>{{ log }}</li>
+            {% else %}
+            <li>No logs yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

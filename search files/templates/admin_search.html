@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Guests</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .search-box { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #dee2e6; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .full-width { grid-column: span 2; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input { width: 100%; padding: 0.5rem; box-sizing: border-box; }
+        button { background: #28a745; color: white; padding: 0.75rem 1.5rem; border: none; cursor: pointer; font-size: 1rem; margin-top: 1rem; }
+        
+        .result-card { border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-left: 5px solid #ccc; }
+        .hot { border-left-color: #dc3545; background-color: #fff5f5; }
+        .warm { border-left-color: #ffc107; background-color: #fffbf2; }
+        .cold { border-left-color: #17a2b8; background-color: #f0faff; }
+        
+        .score-badge { float: right; font-weight: bold; font-size: 1.2em; }
+        .nav-link { display: inline-block; margin-bottom: 1rem; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <a href="/admin" class="nav-link">&larr; Back to Dashboard</a>
+    <h1>Search Database</h1>
+
+    <div class="search-box">
+        <form action="/admin/search" method="post">
+            <div class="form-grid">
+                <div>
+                    <label>First Name</label>
+                    <input type="text" name="first_name" value="{{ query.first_name if query else '' }}">
+                </div>
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" value="{{ query.last_name if query else '' }}">
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <input type="text" name="phone" value="{{ query.phone if query else '' }}">
+                </div>
+                <div>
+                    <label>City</label>
+                    <input type="text" name="city" value="{{ query.city if query else '' }}">
+                </div>
+                <div class="full-width">
+                    <label>State</label>
+                    <input type="text" name="state" value="{{ query.state if query else '' }}">
+                </div>
+            </div>
+            <button type="submit">Run Search</button>
+        </form>
+    </div>
+
+    {% if results %}
+        <h2>Search Results ({{ results|length }})</h2>
+        {% for result in results %}
+        {% if result.report_id %}
+        <a href="/admin/report/{{ result.report_id }}" style="text-decoration:none;color:inherit;display:block;">
+        {% endif %}
+        <div class="result-card {{ result.temperature|lower }}" style="cursor:pointer;">
+            <span class="score-badge">{{ result.match_score }}% Match ({{ result.temperature }})</span>
+            <h3>{{ result.data.first_name }} {{ result.data.last_name }}</h3>
+            <p><strong>Phone:</strong> {{ result.data.phone }}</p>
+            <p><strong>Location:</strong> {{ result.data.location }}</p>
+            <p><strong>Reason:</strong> {{ result.data.reason }}</p>
+        </div>
+        {% if result.report_id %}
+        </a>
+        {% endif %}
+        {% endfor %}
+    {% elif query %}
+        <p>No matches found.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Reports</title>
+    <style>
+        body { font-family: sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+        tr:hover { background-color: #f1f1f1; cursor: pointer; }
+        .nav-link { display: inline-block; margin-bottom: 1rem; color: #666; text-decoration: none; }
+        a.row-link { display: block; text-decoration: none; color: inherit; }
+    </style>
+</head>
+<body>
+    <a href="/admin" class="nav-link">&larr; Back to Dashboard</a>
+    <h1>All Submitted Reports</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Date/Time</th> 
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr onclick="window.location='/admin/report/{{ report.id }}'">
+                <td>{{ report.id }}</td>
+                <td>{{ report.first_name }} {{ report.last_name }}</td>
+                <td>{{ report.phone }}</td>
+                <td>{{ report.city }}, {{ report.state }}</td>
+                <td>Unknown (Timestamp not in DB)</td> 
+                <td><a href="/admin/report/{{ report.id }}">View Details</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">No reports found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

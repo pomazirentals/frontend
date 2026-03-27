@@ -1,0 +1,128 @@
+<div class="panel">
+
+  {% if data.by_domain %}
+  {% set max_users = data.by_domain[0].user_count or 1 %}
+
+  <!-- Summary Stats -->
+  <div class="stat-row">
+    <div class="mini-stat">
+      <div class="mini-stat-icon blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </div>
+      <div class="mini-stat-label">Active Domains</div>
+      <div class="mini-stat-value">{{ data.by_domain | length }}</div>
+      <div class="mini-stat-sub">Branded tenants</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      </div>
+      <div class="mini-stat-label">Total Users</div>
+      <div class="mini-stat-value">{{ data.by_domain | sum(attribute='user_count') }}</div>
+      <div class="mini-stat-sub">Across all domains</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="mini-stat-label">Total Paid</div>
+      <div class="mini-stat-value">{{ data.by_domain | sum(attribute='paid_count') }}</div>
+      <div class="mini-stat-sub green">${{ (data.by_domain | sum(attribute='paid_count')) * 7 }}/mo</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-icon blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="mini-stat-label">Total Searches</div>
+      <div class="mini-stat-value">{{ data.by_domain | sum(attribute='search_count') }}</div>
+      <div class="mini-stat-sub">All domains</div>
+    </div>
+  </div>
+
+  <!-- Signup Volume Bar Chart -->
+  <div class="panel-section">
+    <div class="panel-section-title">Signup Volume by Domain</div>
+    <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:14px;">
+      {% for d in data.by_domain %}
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="color-swatch" style="background:{{ d.primary_color or '#3b82f6' }}"></div>
+            <span style="font-weight:600;font-size:13px;">{{ d.domain }}</span>
+            <span style="font-size:12px;color:#64748b;">{{ d.brand_name }}</span>
+          </div>
+          <span style="font-size:13px;font-weight:700;color:#1e293b;">{{ d.user_count }} users</span>
+        </div>
+        <div class="perf-bar-track" style="height:12px;">
+          <div class="perf-bar-fill"
+               style="width:{{ [(d.user_count / max_users * 100) | int, 2] | max }}%;background:{{ d.primary_color or '#3b82f6' }};"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Performance Table -->
+  <div class="panel-section">
+    <div class="panel-section-header">
+      <div class="panel-section-title" style="padding:0;border:none;">Domain Performance Detail</div>
+    </div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Brand</th>
+            <th>Users</th>
+            <th>Paid</th>
+            <th>Searches</th>
+            <th>Reports</th>
+            <th>Conversion</th>
+            <th>MRR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in data.by_domain %}
+          {% set conversion = ((d.paid_count / d.user_count * 100) | round(1)) if d.user_count > 0 else 0 %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="color-swatch" style="background:{{ d.primary_color or '#3b82f6' }}"></div>
+                <strong>{{ d.domain }}</strong>
+              </div>
+            </td>
+            <td>{{ d.brand_name }}</td>
+            <td><strong>{{ d.user_count }}</strong></td>
+            <td>
+              <span class="badge badge-green">{{ d.paid_count }}</span>
+            </td>
+            <td>{{ d.search_count }}</td>
+            <td>{{ d.report_count }}</td>
+            <td>
+              {% if conversion >= 20 %}
+                <span class="badge badge-green">{{ conversion }}%</span>
+              {% elif conversion >= 10 %}
+                <span class="badge badge-orange">{{ conversion }}%</span>
+              {% else %}
+                <span class="badge badge-red">{{ conversion }}%</span>
+              {% endif %}
+            </td>
+            <td><strong>${{ d.paid_count * 7 }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="empty-state" style="background:#fff;border-radius:10px;box-shadow:var(--shadow);padding:60px 24px;">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <p style="font-size:16px;font-weight:600;color:#1e293b;">No performance data</p>
+    <p>Add tenants in the Tenant Management panel to see performance metrics.</p>
+  </div>
+
+  {% endif %}
+
+</div>

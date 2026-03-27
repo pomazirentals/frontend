@@ -1,0 +1,123 @@
+<div class="panel">
+
+  <!-- Section: Pending Review -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="font-size:16px;font-weight:700;color:#1e293b;">
+        Pending Review
+        {% if data.pending %}
+          <span class="badge badge-orange" style="margin-left:8px;">{{ data.pending | length }}</span>
+        {% endif %}
+      </h2>
+    </div>
+
+    {% if data.pending %}
+    <div class="mod-grid">
+      {% for r in data.pending %}
+      <div class="mod-card">
+        <div class="mod-card-header">
+          <div>
+            <div class="mod-card-guest">
+              {{ r.first_name or '' }} {{ r.last_name or 'Unknown' }}
+            </div>
+            <div class="mod-card-meta">
+              {% if r.city %}{{ r.city }}{% if r.state %}, {{ r.state }}{% endif %} &bull; {% endif %}
+              Reported: {{ (r.created_at or '')[:10] }} &bull; ID: {{ r.id }}
+            </div>
+          </div>
+          <span class="badge badge-orange">Pending</span>
+        </div>
+
+        {% if r.incident_flags %}
+        <div class="mod-card-flags">
+          {% for flag in r.incident_flags.split(',') %}
+            {% if flag.strip() %}
+              <span class="badge badge-red">{{ flag.strip() }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if r.details_of_incident %}
+        <div class="mod-card-body">
+          {{ r.details_of_incident[:300] }}{% if r.details_of_incident | length > 300 %}…{% endif %}
+        </div>
+        {% endif %}
+
+        <div style="font-size:12px;color:#64748b;">
+          {% if r.email %}Email: {{ r.email }} &bull; {% endif %}
+          {% if r.phone %}Phone: {{ r.phone }} &bull; {% endif %}
+          Rating: {{ r.guest_rating or '—' }}/5
+        </div>
+
+        <div class="mod-card-actions">
+          <button class="btn btn-success" onclick="approveReport({{ r.id }})">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Approve
+          </button>
+          <button class="btn btn-danger" onclick="rejectReport({{ r.id }})">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Reject
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state" style="background:#fff;border-radius:10px;box-shadow:var(--shadow);">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <p style="font-size:15px;font-weight:600;color:#1e293b;">All caught up!</p>
+      <p>No reports are pending review.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Section: Recently Moderated -->
+  <div class="panel-section">
+    <div class="panel-section-header">
+      <div class="panel-section-title" style="padding:0;border:none;">Recently Moderated</div>
+    </div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Guest Name</th>
+            <th>Decision</th>
+            <th>Location</th>
+            <th>Date</th>
+            <th>ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in data.recent_approved %}
+          <tr>
+            <td><strong>{{ r.first_name or '' }} {{ r.last_name or '—' }}</strong></td>
+            <td><span class="badge badge-green">Approved</span></td>
+            <td>{{ r.city or '—' }}{% if r.state %}, {{ r.state }}{% endif %}</td>
+            <td style="font-size:12px;color:#64748b;">{{ (r.created_at or '')[:10] }}</td>
+            <td style="font-size:12px;color:#64748b;">#{{ r.id }}</td>
+          </tr>
+          {% endfor %}
+          {% for r in data.recent_rejected %}
+          <tr>
+            <td><strong>{{ r.first_name or '' }} {{ r.last_name or '—' }}</strong></td>
+            <td><span class="badge badge-red">Rejected</span></td>
+            <td>{{ r.city or '—' }}{% if r.state %}, {{ r.state }}{% endif %}</td>
+            <td style="font-size:12px;color:#64748b;">{{ (r.created_at or '')[:10] }}</td>
+            <td style="font-size:12px;color:#64748b;">#{{ r.id }}</td>
+          </tr>
+          {% endfor %}
+          {% if not data.recent_approved and not data.recent_rejected %}
+          <tr>
+            <td colspan="5">
+              <div class="empty-state"><p>No moderation history yet.</p></div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

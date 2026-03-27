@@ -1,0 +1,205 @@
+.cta-newsletter-section {
+    position: relative;
+    border-radius: 16px 16px 0 0;
+    margin: 0 30px;
+
+    @include breakpoint (max-xxl){
+        margin: 0 15px;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+}
+
+.cta-newsletter-wrapper {
+    @include flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 80px;
+    padding-bottom: 80px;
+
+    &.style-2 {
+        h2 {
+            font-size: 78px;
+            font-weight: 500;
+            line-height: 112.821%;
+            letter-spacing: -3.306px;
+
+            @include breakpoint (max-xl){
+                letter-spacing: initial;
+            }
+
+            @include breakpoint (max-lg){
+                font-size: 48px;
+            }
+
+            @include breakpoint (max-md){
+                font-size: 38px;
+            }
+
+            @include breakpoint (max-sm){
+                font-size: 35px;
+            }
+
+        }
+
+        .content {
+            max-width: 420px;
+
+            p {
+                color: $white;
+                font-size: 18px;
+                font-weight: 500;
+                line-height:144.444%; 
+                letter-spacing: -1px;
+                font-family: $heading-font;
+                margin-bottom: 30px;
+
+                 @include breakpoint (max-xl){
+                    line-height: 160%;
+                }
+
+                @include breakpoint (max-md){
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    @include breakpoint (max-xl){
+        flex-wrap: wrap;
+        gap: 30px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    h2 {
+        color: $white;
+        font-size: 69.677px;
+        font-weight: 500;
+        letter-spacing: -2.98px;
+
+        @include breakpoint (max-xl){
+            letter-spacing: initial;
+        }
+
+        @include breakpoint (max-lg){
+            font-size: 48px;
+        }
+
+        @include breakpoint (max-md){
+            font-size: 38px;
+        }
+
+        @include breakpoint (max-sm){
+            font-size: 35px;
+        }
+
+        span {
+            color: rgba(255, 255, 255, 0.50);
+        }
+    }
+
+    .newsletter-form {
+        width: 100%;
+        max-width: 430px;
+
+        @include breakpoint (max-md){
+            max-width: initial;
+        }
+
+        p {
+            font-size: 20px;
+            font-weight: 500;
+            color: $white;
+        }
+
+        form {
+            position: relative;
+            margin-top: 25px;
+
+            input {
+                width: 100%;
+                border: none;
+                background-color: $white;
+                padding: 22px 30px;
+                border-radius: 48px;
+                line-height: 1;
+                color: $text-color;
+
+                &::placeholder {
+                    color: $text-color;
+                }
+            }
+
+            .email-btn {
+                background: $theme-color;
+                width: 52px;
+                height: 52px;
+                line-height: 52px;
+                text-align: center;
+                border-radius: 50%;
+                color: $white;
+                @include transition;
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                bottom: 6px;
+
+                &:hover {
+                    background-color: $theme-color;
+                }
+            }
+        }
+    }
+}
+
+.cta-banner-4 {
+    .cta-content {
+        text-align: center;
+
+        h2 {
+            color: $white;
+            font-size: 122.704px;
+            font-weight: 700;
+            line-height: 100%;
+            letter-spacing: -3.408px;
+            text-transform: uppercase;
+
+            @include breakpoint (max-xl){
+                font-size: 80px;
+            }
+
+            @include breakpoint (max-sm){
+                font-size: 60px;
+
+                img {
+                    display: none;
+                }
+            }
+
+            @include breakpoint (max-xxs){
+                font-size: 42px;
+            }
+        }
+
+        .gt-theme-btn-main {
+            margin-top: 32px;
+
+            &:hover {
+               .gt-theme-btn {
+                 background-color: $white;
+                 color: $header-color-4;
+               }
+
+               .gt-theme-btn-arrow-left,.gt-theme-btn-arrow-right {
+                 background-color: $white;
+                 color: $header-color-4;
+               }
+            }
+        }
+    }
+}
+
+.cta-newsletter-section {
+    background-color: $bg-color;
+}

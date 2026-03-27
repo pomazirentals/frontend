@@ -1,0 +1,46 @@
+# ─── Python / Backend ───────────────────────────────────────────
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/**/*.pyc
+backend/venv/
+backend/.venv/
+backend/.env
+backend/guests.db
+backend/server.out.log
+backend/server.err.log
+
+# ─── Search files venv ──────────────────────────────────────────
+search files/.venv/
+search files/__pycache__/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+
+# ─── Node / React Frontends ─────────────────────────────────────
+REACT frontends/*/node_modules/
+REACT frontends/*/dist/
+REACT frontends/*/build/
+REACT frontends/*/.env
+REACT frontends/*/.env.local
+REACT frontends/*/.env.production
+
+# ─── OS / Editor ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.cookies
+*.zip
+.vite/
+.idea/
+.vscode/
+
+# ─── Misc project artifacts (not needed in repo) ────────────────
+login.txt
+cookies.txt
+admin.cookies
+auth.cookies
+final_admin.cookies
+p8_8010.cookies
+p9.cookies
+p9rate.cookies
+phase8.cookies

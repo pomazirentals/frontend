@@ -1,0 +1,151 @@
+<div class="panel">
+
+  <!-- Add / Edit Tenant Form -->
+  <div class="form-card" id="tenant-form-card">
+    <div class="form-card-title" id="tenant-form-title">Add New Tenant</div>
+    <form onsubmit="submitTenantForm(event)" autocomplete="off">
+      <input type="hidden" id="tenant-id" name="id" value="">
+
+      <div class="form-row form-row-2" style="margin-bottom:16px;">
+        <div class="form-group">
+          <label class="form-label" for="tenant-domain">Domain <span style="color:#ef4444">*</span></label>
+          <input class="form-control" type="text" id="tenant-domain" name="domain"
+                 placeholder="e.g. guestcheckbnb.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tenant-brand">Brand Name <span style="color:#ef4444">*</span></label>
+          <input class="form-control" type="text" id="tenant-brand" name="brand_name"
+                 placeholder="e.g. GuestCheckBnb" required>
+        </div>
+      </div>
+
+      <div class="form-row form-row-2" style="margin-bottom:16px;">
+        <div class="form-group">
+          <label class="form-label" for="tenant-logo">Logo URL</label>
+          <input class="form-control" type="url" id="tenant-logo" name="logo_url"
+                 placeholder="https://example.com/logo.png">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tenant-color">Primary Color</label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input class="form-control" type="text" id="tenant-color" name="primary_color"
+                   placeholder="#3b82f6" value="#3b82f6" style="flex:1;">
+            <input type="color" id="tenant-color-picker" value="#3b82f6"
+                   style="width:40px;height:38px;border:1px solid #e2e8f0;border-radius:7px;cursor:pointer;padding:2px;"
+                   oninput="document.getElementById('tenant-color').value=this.value">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="tenant-active" name="active" value="1" checked
+                 style="width:16px;height:16px;accent-color:var(--primary);">
+          <span style="font-size:14px;font-weight:500;color:#1e293b;">Active (tenant is live)</span>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save Tenant
+        </button>
+        <button type="button" class="btn btn-ghost" onclick="resetTenantForm()">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tenants Table -->
+  <div class="panel-section">
+    <div class="panel-section-header">
+      <div class="panel-section-title" style="padding:0;border:none;">All Tenants</div>
+      <span class="badge badge-blue">{{ data.tenants | length }} total</span>
+    </div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Brand Name</th>
+            <th>Color</th>
+            <th>Logo</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in data.tenants %}
+          <tr>
+            <td><strong>{{ t.domain }}</strong></td>
+            <td>{{ t.brand_name }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="color-swatch" style="background:{{ t.primary_color or '#3b82f6' }}"></div>
+                <span style="font-size:12px;color:#64748b;">{{ t.primary_color or '#3b82f6' }}</span>
+              </div>
+            </td>
+            <td>
+              {% if t.logo_url %}
+                <img src="{{ t.logo_url }}" alt="logo" style="height:24px;width:auto;border-radius:4px;" onerror="this.style.display='none'">
+              {% else %}
+                <span style="font-size:12px;color:#94a3b8;">None</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if t.active %}
+                <span class="badge badge-green">Active</span>
+              {% else %}
+                <span class="badge badge-grey">Inactive</span>
+              {% endif %}
+            </td>
+            <td style="font-size:12px;color:#64748b;">{{ (t.created_at or '')[:10] }}</td>
+            <td>
+              <div class="action-group">
+                <button class="btn btn-ghost btn-sm"
+                  onclick="editTenant({
+                    id: {{ t.id }},
+                    domain: {{ t.domain | tojson }},
+                    brand_name: {{ t.brand_name | tojson }},
+                    logo_url: {{ (t.logo_url or '') | tojson }},
+                    primary_color: {{ (t.primary_color or '#3b82f6') | tojson }},
+                    active: {{ 1 if t.active else 0 }}
+                  })">
+                  Edit
+                </button>
+                {% if t.active %}
+                <button class="btn btn-danger btn-sm" onclick="deactivateTenant({{ t.id }})">
+                  Deactivate
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <p>No tenants configured. Add your first tenant above.</p>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Keep color picker in sync with text input
+document.getElementById('tenant-color')?.addEventListener('input', function() {
+  const picker = document.getElementById('tenant-color-picker');
+  if (picker && /^#[0-9a-fA-F]{6}$/.test(this.value)) {
+    picker.value = this.value;
+  }
+});
+</script>

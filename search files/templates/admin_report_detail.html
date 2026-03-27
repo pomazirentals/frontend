@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report #{{ report.id }}</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #eef0f5;
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+            color: #1a1a2e;
+        }
+
+        .page-wrapper { max-width: 700px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            color: #6b7280; text-decoration: none; font-size: 0.85rem;
+            margin-bottom: 1.25rem; transition: color 0.15s;
+        }
+        .back-link:hover { color: #374151; }
+
+        .page-header {
+            display: flex; align-items: baseline; gap: 0.75rem;
+            margin-bottom: 1.75rem;
+        }
+        .page-title { font-size: 1.45rem; font-weight: 700; color: #111827; }
+        .report-id   { font-size: 0.85rem; color: #9ca3af; }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.06);
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-label {
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.09em; color: #9ca3af;
+            margin-bottom: 1.1rem; padding-bottom: 0.55rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; }
+        .full   { grid-column: 1 / -1; }
+
+        .field { display: flex; flex-direction: column; gap: 0.3rem; }
+
+        .field-label {
+            font-size: 0.75rem; font-weight: 600;
+            color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em;
+        }
+
+        .field-value {
+            font-size: 0.95rem; color: #111827; font-weight: 500;
+        }
+        .field-value.empty { color: #b0b7c3; font-style: italic; font-weight: 400; }
+
+        .field-value.block {
+            background: #f9fafb; border: 1px solid #e5e7eb;
+            border-radius: 7px; padding: 0.75rem 0.9rem;
+            font-weight: 400; line-height: 1.6; white-space: pre-wrap;
+        }
+
+        /* Stars display */
+        .stars-display { display: flex; gap: 3px; margin-top: 2px; }
+        .star { font-size: 1.4rem; color: #d1d5db; }
+        .star.filled { color: #f59e0b; }
+
+        /* Images */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        .image-grid a { display: block; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; }
+        .image-grid img {
+            width: 100%; height: 160px;
+            object-fit: cover; display: block;
+            transition: opacity 0.15s;
+        }
+        .image-grid img:hover { opacity: 0.85; }
+        .no-images { font-size: 0.85rem; color: #b0b7c3; font-style: italic; }
+
+        /* Incident flag badges */
+        .flag-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+        .flag-badge {
+            background: #fef3c7; color: #92400e;
+            border: 1px solid #fde68a;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.78rem; font-weight: 500;
+        }
+        .flag-badge.none { background: #f3f4f6; color: #9ca3af; border-color: #e5e7eb; }
+
+        @media (max-width: 560px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .full { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+    <a href="/admin/results" class="back-link">&#8592; Back to All Reports</a>
+
+    <div class="page-header">
+        <h1 class="page-title">Guest Report</h1>
+        <span class="report-id">#{{ report.id }}</span>
+    </div>
+
+    <!-- Guest Identity -->
+    <div class="card">
+        <div class="section-label">Guest Identity</div>
+        <div class="grid-2">
+            <div class="field">
+                <span class="field-label">First Name</span>
+                <span class="field-value {% if not report.first_name %}empty{% endif %}">
+                    {{ report.first_name or "—" }}
+                </span>
+            </div>
+            <div class="field">
+                <span class="field-label">Last Name</span>
+                <span class="field-value {% if not report.last_name %}empty{% endif %}">
+                    {{ report.last_name or "—" }}
+                </span>
+            </div>
+            <div class="field full">
+                <span class="field-label">Airbnb / Vrbo Profile</span>
+                <span class="field-value {% if not report.airbnb_vrbo_profile %}empty{% endif %}">
+                    {{ report.airbnb_vrbo_profile or "Not provided" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+        <div class="section-label">Contact Information</div>
+        <div class="grid-2">
+            <div class="field">
+                <span class="field-label">Phone</span>
+                <span class="field-value {% if not report.phone %}empty{% endif %}">
+                    {{ report.phone or "Not provided" }}
+                </span>
+            </div>
+            <div class="field">
+                <span class="field-label">Email</span>
+                <span class="field-value {% if not report.email %}empty{% endif %}">
+                    {{ report.email or "Not provided" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location -->
+    <div class="card">
+        <div class="section-label">Location</div>
+        <div class="grid-2">
+            <div class="field">
+                <span class="field-label">City</span>
+                <span class="field-value {% if not report.city %}empty{% endif %}">
+                    {{ report.city or "—" }}
+                </span>
+            </div>
+            <div class="field">
+                <span class="field-label">State</span>
+                <span class="field-value {% if not report.state %}empty{% endif %}">
+                    {{ report.state or "—" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stay Details -->
+    <div class="card">
+        <div class="section-label">Stay Details</div>
+        <div class="grid-2">
+            <div class="field">
+                <span class="field-label">Group Size</span>
+                <span class="field-value">{{ report.prev_group_size }}</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Stay Length</span>
+                <span class="field-value">{{ report.prev_stay_length }} night(s)</span>
+            </div>
+            <div class="field">
+                <span class="field-label">Date of Stay</span>
+                <span class="field-value {% if not report.stay_date %}empty{% endif %}">
+                    {{ report.stay_date or "Not provided" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incident Flags -->
+    <div class="card">
+        <div class="section-label">Incident Flags</div>
+        <div class="flag-list">
+            {% if report.incident_flags %}
+                {% for flag in report.incident_flags.split(',') %}
+                <span class="flag-badge">{{ flag.strip() }}</span>
+                {% endfor %}
+            {% else %}
+                <span class="flag-badge none">No flags selected</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Rating & Incident Details -->
+    <div class="card">
+        <div class="section-label">Rating &amp; Incident Details</div>
+        <div class="grid-2">
+            <div class="field">
+                <span class="field-label">Guest Rating</span>
+                <div class="stars-display">
+                    {% for i in range(1, 6) %}
+                    <span class="star {% if report.guest_rating and i <= report.guest_rating %}filled{% endif %}">&#9733;</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="field full" style="margin-top: 0.75rem;">
+                <span class="field-label">Details of Incident</span>
+                <div class="field-value block">{{ report.details_of_incident or report.report_reason or "No details provided." }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evidence Photos -->
+    <div class="card">
+        <div class="section-label">Evidence Photos</div>
+        {% if report.uploaded_images %}
+            <div class="image-grid">
+                {% for img_path in report.uploaded_images.split(',') %}
+                {% set img = img_path.strip() %}
+                {% if img %}
+                <a href="{{ img }}" target="_blank" title="Open full size">
+                    <img src="{{ img }}" alt="Evidence photo">
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-images">No photos uploaded for this report.</p>
+        {% endif %}
+    </div>
+
+</div>
+</body>
+</html>
