@@ -1,0 +1,219 @@
+.contact-info-box {
+    margin-top: 30px;
+    background-color: $bg-color;
+    padding: 40px 30px;
+    border-radius: 8px;
+    @include flex;
+    gap: 15px;
+    position: relative;
+    z-index: 9;
+
+    .icon {
+        max-width: 80px;
+        width: 100%;
+        height: 80px;
+        line-height: 80px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: $theme-color;
+        color: $white;
+        font-size: 25px;
+        @include transition;
+    }
+
+    .content {
+        h4 {
+            font-size: 20px;
+            color: $header-color;
+            font-weight: 500;
+            text-transform: capitalize;
+            margin-bottom: 5px;
+        }
+
+        p {
+            line-height: 162.5%;
+
+            a {
+                color: $text-color;
+            }
+        }
+    }
+
+     &::before {
+        position: absolute;
+        content: "";
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        opacity: 0;
+        -webkit-transform: scale(1, 0.3);
+        transform: scale(1, 0.3);
+        background-color: $theme-color;
+        -webkit-transition: all 500ms ease;
+        transition: all 500ms ease;
+        z-index: -1;
+        border-radius: 8px;
+    }
+
+    &.active {
+         &::before {
+            opacity: 1;
+            transform: scale(1, 1);
+        }
+
+        .icon {
+            background-color: $body-bg;
+
+            i {
+                -webkit-animation: gelatine 0.6s;
+                animation: gelatine 0.6s;
+            }
+        }
+
+        .content {
+            h4,p {
+                color: $white;
+            }
+
+            p {
+                a {
+                     color: $white;
+                }
+            }
+        }
+    }
+
+}
+
+.contact-wrapper {
+    .contact-map {
+        iframe {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+        }
+    }
+    .contact-box-items {
+        padding: 50px 50px;
+        border-radius: 12px;
+        background-color: $bg-color;
+
+        @include breakpoint (max-md){
+            padding: 30px;
+        }
+
+        &.style-2 {
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(7.5px);
+
+            .contact-form-box {
+                .form-clt {
+                    input,textarea {
+                        color: $white;
+                        border-bottom: 1px solid rgba(255, 255, 255, .2);
+
+                        &::placeholder {
+                           color: $white;
+                        }
+                    }
+
+                    textarea {
+                        padding-bottom: 120px;
+                    }
+
+                    .form {
+                    .single-select {
+                        border: none;
+                        color: $header-color;
+                         border-bottom: 1px solid rgba(255, 255, 255, .2);
+
+                        .current {
+                            color: $white;
+                        }
+
+                        &::after {
+                            border-bottom: 2px solid $white;
+                            border-right: 2px solid $white;
+                        }
+
+                    }
+                }
+                }
+            }
+        }
+
+        .contact-form-box {
+            margin-top: 30px;
+
+            .form-clt {
+                input,textarea {
+                    outline: none;
+                    width: 100%;
+                    color: $header-color;
+                    padding-bottom: 20px;
+                    border: none;
+                    background: transparent;
+                    border-bottom: 1px solid rgba(255, 255, 255, .08);
+                    text-transform: capitalize;
+
+                    &::placeholder {
+                        color: $header-color;
+                    }
+                }
+
+                textarea {
+                    padding-bottom: 120px;
+                }
+
+                .form {
+                .single-select {
+                    border: none;
+                   border-bottom: 1px solid rgba(255, 255, 255, .08);
+                    background-color: transparent;
+                    width: 100%;
+                    height: initial;
+                    line-height: initial;
+                    text-transform: capitalize;
+                    color: $header-color;
+                    padding-bottom: 20px;
+                    border-radius: 0;
+
+                    .current {
+                        color: $header-color;
+                    }
+
+                    &::after {
+                        border-bottom: 2px solid $header-color;
+                        border-right: 2px solid $header-color;
+                        width: 8px;
+                        height: 8px;
+                        right: 12px;
+                    }
+
+                    .list {
+                        width: 100%;
+                    }
+                }
+            }
+            }
+        }
+    }
+}
+
+.contact-section-2 {
+    position: relative;
+    margin: 0 30px;
+    border-radius: 12px;
+    z-index: 9;
+
+    &::before {
+        @include before;
+        z-index: -1;
+        border-radius: 12px;
+        opacity: 0.4;
+        background: $header-color;
+    }
+}

@@ -1,0 +1,117 @@
+.brand-section {
+    margin: 30px;
+    margin-bottom: 0;
+}
+
+.brand-box-1 {
+    height: 125px;
+    line-height: 125px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+
+    &.style-4 {
+        border-radius: 0;
+        border: 1px solid #DFDCD2;
+
+        &::before {
+            position: absolute;
+            content: "";
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            opacity: 0;
+            -webkit-transform: scale(1, 0.3);
+            transform: scale(1, 0.3);
+            background-color: $bg-color-5;
+            -webkit-transition: all 500ms ease;
+            transition: all 500ms ease;
+            z-index: -1;
+        }
+
+        &:hover {
+            border: 1px solid $bg-color-5;
+
+            &::before {
+                opacity: 1;
+                transform: scale(1, 1);
+            }
+
+            .brand-img-1 {
+                opacity: 1;
+                filter: brightness(1.4);
+
+                img {
+                    filter: brightness(1.4);
+
+                }
+            }
+        }
+    }
+
+    .brand-img-1 {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+       
+        transition: all 0.6s ease; // smooth animation
+        transform: translateY(0);
+        }
+
+        &:last-child img {
+        transform: translateY(-350%);
+        opacity: 0;
+        }
+    }
+
+    &:hover {
+        .brand-img-1:first-child img {
+        transform: translateY(100%);
+        opacity: 0;
+        }
+
+        .brand-img-1:last-child img {
+        transform: translateY(0);
+        opacity: 1;
+        }
+    }
+
+    &.style-border-5 {
+        border: 1px solid #F0ECDF;
+        border-radius: 0;
+    }
+}
+
+.brand-section-2 {
+    background-color: $theme-color-3;
+    margin: 0 30px;
+    margin-top: 30px;
+    padding: 60px 30px 30px;
+    border-radius: 14px;
+
+    .brand-box-1 {
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+
+
+        .brand-img-1 {
+            filter: brightness(0) invert(1) !important;
+             img {
+                filter: brightness(0) invert(1) !important;
+                opacity: 1;
+             }
+        }
+    }
+}
+
