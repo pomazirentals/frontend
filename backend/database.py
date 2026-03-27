@@ -173,7 +173,7 @@ def init_db():
     if seed_email and seed_password:
         from passlib.context import CryptContext
         pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        hashed = pwd_ctx.hash(seed_password)
+        hashed = pwd_ctx.hash(seed_password[:72])
         # Use tenant_id=1 (the localhost/default tenant seeded above)
         cursor.execute(
             "SELECT id FROM tenants ORDER BY id LIMIT 1"
