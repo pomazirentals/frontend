@@ -4,7 +4,7 @@ jinja2
 python-multipart
 aiofiles
 python-jose[cryptography]
-bcrypt
+bcrypt==3.2.2
 passlib[bcrypt]
 authlib
 httpx
