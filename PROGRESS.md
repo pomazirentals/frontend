@@ -256,7 +256,61 @@ Every page tested with live server on http://localhost:8000. All return 200 exce
 ---
 
 ## TO DEPLOY
-1. Push backend/ to Railway. Set all .env vars (JWT_SECRET, SMTP_*, STRIPE_*, ANTHROPIC_API_KEY, TWILIO_*, etc.)
-2. For each React site: copy .env.example → .env.local, set VITE_FASTAPI_URL or REACT_APP_FASTAPI_URL to your Railway URL
-3. Deploy each React site to Netlify (netlify.toml is pre-configured in each folder)
-4. Add each domain to the Tenants table via /admin → Tenant Management
+
+### Phase 11: GitHub + Railway + Netlify Deployment (COMPLETE — 2026-03-27)
+- [x] Root .gitignore (excludes venv, node_modules, .env, guests.db, dist, __pycache__)
+- [x] backend/railway.toml (nixpacks builder, uvicorn start command, /health check)
+- [x] CORS updated: *.netlify.app subdomains allowed automatically for testing
+- [x] database.py: admin user seeded via SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD env vars
+- [x] database.py: DEFAULT_TENANT_DOMAIN env var seeds Railway hostname as tenant
+- [x] backend/.env.example updated with new Railway vars
+- [x] React site 1: build confirmed (npm run build → dist/) ✓
+- [x] React site 1: no hardcoded URLs — uses VITE_FASTAPI_URL ✓
+- [x] deploy.bat: one-click git add → commit → push → triggers both services
+- [x] Git repo initialized, initial commit made (935 files)
+
+### STEP-BY-STEP SETUP (do this once):
+
+**1. Create GitHub repo**
+- Go to github.com → New repository → name it (e.g. guestguard)
+- DO NOT initialize with README (repo already has files)
+- Copy the repo URL (https://github.com/YOUR_USERNAME/guestguard.git)
+
+**2. Connect local repo to GitHub**
+```
+cd C:\Users\Rob\Desktop\final
+git remote add origin https://github.com/YOUR_USERNAME/guestguard.git
+git branch -M main
+git push -u origin main
+```
+
+**3. Deploy backend to Railway**
+- railway.app → New Project → Deploy from GitHub repo → pick this repo
+- Set Root Directory: `backend`
+- Set these env vars in Railway dashboard:
+  - JWT_SECRET = (generate a long random string)
+  - APP_SECRET_KEY = (another random string)
+  - DATABASE_URL = guests.db
+  - DEBUG = false
+  - SEED_ADMIN_EMAIL = admin@youremail.com
+  - SEED_ADMIN_PASSWORD = (strong password)
+  - DEFAULT_TENANT_DOMAIN = (your-app.up.railway.app — set AFTER Railway gives you the URL)
+- Deploy → Railway gives you a URL like: https://xxx.up.railway.app
+- Update DEFAULT_TENANT_DOMAIN with that URL, redeploy once
+- Log in at https://xxx.up.railway.app/login
+- THEN remove SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD from Railway env
+
+**4. Deploy React site 1 to Netlify**
+- netlify.com → Add new site → Deploy with GitHub → pick this repo
+- Set Base directory: `REACT frontends/template-react1`
+- Build command: `npm run build` (auto-detected from netlify.toml)
+- Publish directory: `dist` (auto-detected)
+- Add env var: VITE_FASTAPI_URL = https://xxx.up.railway.app
+- Deploy → Netlify gives you a URL like: https://yyy.netlify.app
+
+**5. From now on — just double-click deploy.bat**
+- It does: git add → git commit → git push
+- Railway and Netlify auto-deploy from GitHub push
+
+**6. Old deploy instructions (still valid):**
+- Add each domain to the Tenants table via /admin → Tenant Management
