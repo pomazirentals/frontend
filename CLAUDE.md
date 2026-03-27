@@ -690,3 +690,63 @@ rapidfuzz
 - When in doubt about a feature, refer to File2-AdminDashboard-Final.txt
 - Build in the phase order defined in PROGRESS.md
 - Do not start Phase N+1 until Phase N is complete and marked in PROGRESS.md
+
+---
+
+## AI SYSTEM RULES + TASK ENFORCEMENT
+
+### CORE ARCHITECTURE RULES (NON-NEGOTIABLE)
+
+1. **No hardcoded domains, URLs, or ports in code** — all external endpoints must use environment variables
+2. **Frontend must be domain-agnostic** — do NOT use hostname, domain, or window.location for logic
+3. **Backend owns all environment-dependent logic** — tenant, domain, and branding must be resolved in backend only
+4. **Frontend must not determine tenant or branding** — it only renders API responses
+5. **All environment-specific logic must be isolated** — allowed only in config files or resolve_tenant()
+6. **Navigation must be relative** — do NOT use absolute URLs for routing
+7. **UI must not change behavior based on environment** — no dev/prod/domain branching in components
+
+---
+
+### IMPLEMENTATION RULES
+
+1. Do not introduce new patterns if one already exists — reuse existing services, hooks, API functions
+2. Keep API access centralized — all requests must go through a single API layer (e.g., api.ts)
+3. Do not duplicate logic — extend existing logic instead of rewriting
+4. Changes must be minimal and scoped — do NOT refactor unrelated parts
+5. Maintain existing file structure and naming conventions
+6. Do not introduce new dependencies unless explicitly required
+7. All new code must match existing patterns exactly
+
+---
+
+### DEBUGGING RULES (STRICT)
+
+1. Do NOT guess
+2. Identify exact cause before making changes
+3. Change only ONE variable at a time
+4. Explain the cause BEFORE applying a fix
+5. Do NOT apply multiple fixes at once
+6. If cause is unknown: state what is missing, then STOP
+
+---
+
+### TASK VALIDATION CHECKLIST
+
+Before completing any task, verify:
+- [ ] No hardcoded URLs or domains introduced
+- [ ] No domain/hostname logic added to frontend
+- [ ] API calls use environment variables only
+- [ ] No tenant logic added to frontend
+- [ ] Navigation uses relative paths only
+- [ ] No duplicate logic introduced
+- [ ] Changes are minimal and scoped
+
+If any item fails: fix it before returning the result.
+
+---
+
+### FINAL RULE
+
+Before writing code, ask: **"Will this still work if domain, environment, or deployment changes?"**
+
+If NO — redesign before implementing.
