@@ -259,7 +259,7 @@ Every page tested with live server on http://localhost:8000. All return 200 exce
 
 ### Phase 11: GitHub + Railway + Netlify Deployment (COMPLETE — 2026-03-27)
 - [x] Root .gitignore (excludes venv, node_modules, .env, guests.db, dist, __pycache__)
-- [x] backend/railway.toml (nixpacks builder, uvicorn start command, /health check)
+- [x] backend/railway.toml (nixpacks builder, uvicorn start command — NO healthcheck)
 - [x] CORS updated: *.netlify.app subdomains allowed automatically for testing
 - [x] database.py: admin user seeded via SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD env vars
 - [x] database.py: DEFAULT_TENANT_DOMAIN env var seeds Railway hostname as tenant
@@ -268,6 +268,27 @@ Every page tested with live server on http://localhost:8000. All return 200 exce
 - [x] React site 1: no hardcoded URLs — uses VITE_FASTAPI_URL ✓
 - [x] deploy.bat: one-click git add → commit → push → triggers both services
 - [x] Git repo initialized, initial commit made (935 files)
+- [x] bcrypt==3.2.2 pinned in requirements.txt (passlib incompatible with bcrypt 4.x)
+- [x] seed_password[:72] truncation added in database.py (bcrypt 72-byte limit)
+- [x] itsdangerous added to requirements.txt (required by Starlette SessionMiddleware)
+- [x] gridtech nested .git removed — files re-added as regular tracked files
+- [x] gridtech images copied to correct public/assets/img paths (were at wrong depth)
+- [x] React nav: Report Form link added → /submit-report on backend
+- [x] AI System Rules added to CLAUDE.md (architecture + debugging enforcement)
+
+### LIVE URLS (as of 2026-03-27)
+- **Backend (Railway):** https://frontend-production-d0e3.up.railway.app
+- **Frontend (Netlify):** https://endearing-trifle-26398e.netlify.app
+- **GitHub repo:** https://github.com/pomazirentals/frontend (branch: main)
+- **Admin login:** pomazirentals@gmail.com (see Railway SEED_ADMIN_PASSWORD var)
+- **Active tenants:** localhost, frontend-production-d0e3.up.railway.app, endearing-trifle-26398e.netlify.app
+
+### WHAT NEEDS TO BE DONE NEXT
+- [ ] Customize React site 1 text/branding for GuestGuard (replace Gridtech placeholder content)
+- [ ] Set up Stripe (add STRIPE_SECRET_KEY, STRIPE_PRICE_ID, STRIPE_WEBHOOK_SECRET to Railway)
+- [ ] Set up email verification (add SMTP vars to Railway)
+- [ ] Add real custom domains (via Railway custom domain + Netlify domain management)
+- [ ] Deploy remaining 4 React sites to Netlify (template-react2, pandawa-react3, etc.)
 
 ### STEP-BY-STEP SETUP (do this once):
 
