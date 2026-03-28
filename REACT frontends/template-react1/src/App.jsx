@@ -295,6 +295,7 @@ function App() {
                                                 <li>
                                                     <a href={tenantConfig.contact_url}>Contact Us</a>
                                                 </li>
+                                            <li><a href={tenantConfig.report_url}>Report Form</a></li>
                                             <li><a href={tenantConfig.login_url}>Login</a></li>
                                                 <li><a href={tenantConfig.register_url}>Register</a></li>
                                             </ul>

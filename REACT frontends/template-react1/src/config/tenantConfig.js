@@ -5,4 +5,5 @@ export const tenantConfig = {
   register_url: `${BASE}/register`,
   pricing_url: `${BASE}/register`,
   contact_url: `${BASE}/register`,
+  report_url: `${BASE}/submit-report`,
 };
